@@ -1,7 +1,6 @@
-huggingface_hub==0.23.*
-gradio==4.39.*
-fastapi==0.111.0
-torch==2.4.* --index-url https://download.pytorch.org/whl/cpu
-transformers==4.43.*
-accelerate==0.33.*
-prometheus_client==0.16.*
+certifi
+yt-dlp
+gradio
+groq
+torch
+transformers==4.32.0

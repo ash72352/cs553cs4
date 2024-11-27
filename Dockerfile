@@ -17,6 +17,7 @@ EXPOSE 9100
 ENV GRADIO_SERVER_NAME="0.0.0.0"
 
 # We put this near the end since it can change
+RUN apt-get install -y ffmpeg
 COPY requirements.txt requirements.txt
 RUN pip install --no-cache-dir -r /opt/app/requirements.txt
 
