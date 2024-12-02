@@ -1,0 +1,43 @@
+name: Deploy API Product to Azure
+
+on:
+  push:
+    branches:
+      - main  # Trigger deployment on push to the main branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Log in to Azure
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Build and push Docker image
+      run: |
+        docker build -t ash72352/cs553cs4 .
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+        docker push ash72352/cs553cs4
+
+    - name: Deploy to Azure Container Apps
+      run: |
+        az containerapp create \
+          --name api-product \
+          --resource-group my-resource-group \
+          --environment my-container-environment \
+          --image ash72352/cs553cs4 \
+          --ingress external \
+          --target-port 7860
+
+    - name: Get Container App URL
+      run: |
+        fqdn=$(az containerapp show \
+          --name api-product \
+          --resource-group my-resource-group \
+          --query properties.configuration.ingress.fqdn -o tsv)
+        echo "API is running at: https://$fqdn"
